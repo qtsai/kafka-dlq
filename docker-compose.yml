@@ -1,0 +1,38 @@
+version: '3'
+services:
+  my-kafka-zookeeper:
+    image: confluentinc/cp-zookeeper:7.3.0
+    container_name: my-kafka-zookeeper
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+      ZOOKEEPER_TICK_TIME: 2000
+
+  my-kafka-broker:
+    image: confluentinc/cp-kafka:7.3.0
+    container_name: my-kafka-broker
+    ports:
+      # To learn about configuring Kafka for access across networks see
+      # https://www.confluent.io/blog/kafka-client-cannot-connect-to-broker-on-aws-on-docker-etc/
+      - "9094:9092"
+      - "9093:9093"
+    depends_on:
+      - my-kafka-zookeeper
+    environment:
+      KAFKA_BROKER_ID: 1
+      KAFKA_ZOOKEEPER_CONNECT: 'my-kafka-zookeeper:2181'
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: PLAINTEXT:PLAINTEXT,SSL:SSL
+      KAFKA_ADVERTISED_LISTENERS: PLAINTEXT://localhost:9092,SSL://localhost:9093
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      #      SSL CONFIG
+      KAFKA_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: " "
+      KAFKA_LISTENER_NAME_INTERNAL_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM: " "
+      KAFKA_SSL_CLIENT_AUTH: 'required'
+      KAFKA_SSL_KEYSTORE_FILENAME: '/certs/kafka.broker.keystore.jks'
+      KAFKA_SSL_KEYSTORE_CREDENTIALS: '/certs/credentials'
+      KAFKA_SSL_KEY_CREDENTIALS: '/certs/credentials'
+      KAFKA_SSL_TRUSTSTORE_FILENAME: '/certs/kafka.broker.truststore.jks'
+      KAFKA_SSL_TRUSTSTORE_CREDENTIALS: '/certs/credentials'
+    volumes:
+      - ./config/certs:/etc/kafka/secrets/certs

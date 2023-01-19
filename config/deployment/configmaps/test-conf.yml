@@ -1,0 +1,7 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: test-conf
+data:
+  application.properties: test.message=hi
+#  application.properties: test.message=hi2

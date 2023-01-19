@@ -1,0 +1,37 @@
+### send messages
+POST localhost:8080/message?count=10
+Content-Type: application/json
+
+Hello there
+
+### create Order
+POST localhost:8080/message/order
+Content-Type: application/json
+
+{
+  "id": 56529,
+  "message": "My Custom Order 1111",
+  "products": [
+    {
+      "id": 6003,
+      "quantity": -776843783
+    },
+    {
+      "id": 7523,
+      "quantity": -19850824
+    }
+  ]
+}
+
+### all orders
+GET localhost:8080/orders
+
+
+### actuator/health
+GET http://localhost:9000/actuator/health
+
+### liveness
+GET http://localhost:9000/actuator/health/liveness
+
+### readiness
+GET http://localhost:9000/actuator/health/readiness

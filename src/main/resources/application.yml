@@ -1,0 +1,44 @@
+kafka-dlq-service:
+  order:
+    id: main
+    topic:
+      name: order
+  order-retry:
+    id: main-retry-l1
+    topic:
+      name: order-retry-l1
+  order-dlq:
+    id: main-dlq
+    topic:
+      name: order-dlq
+
+spring:
+  kafka:
+    bootstrap-servers: localhost:9092
+    consumer:
+      properties:
+        reconnect.backoff.ms: 5000
+    admin:
+      properties:
+        reconnect.backoff.ms: 3000
+
+management:
+  endpoint:
+    health:
+      show-details: always
+      probes:
+        enabled: true
+      group:
+        liveness:
+          include: kafka
+  endpoints:
+    web:
+      exposure:
+        include: health
+  server:
+    port: 9010
+  health:
+    livenessState:
+      enabled: true
+    readinessState:
+      enabled: true

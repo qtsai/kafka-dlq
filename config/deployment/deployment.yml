@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka-dlq
+  labels:
+    app: kafka-dlq
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: kafka-dlq
+  template:
+    metadata:
+      labels:
+        app: kafka-dlq
+    spec:
+      containers:
+        - name: kafka-dlq
+          imagePullPolicy: IfNotPresent
+          image: kafka-dlq:latest
+          livenessProbe:
+            httpGet:
+              path: /actuator/health/liveness
+              port: 9010
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          readinessProbe:
+            httpGet:
+              path: /actuator/health/readiness
+              port: 9010
+            initialDelaySeconds: 3
+            periodSeconds: 3
+          volumeMounts:
+            - mountPath: /app/build/config
+              name: myconfigmap
+      volumes:
+        - name: myconfigmap
+          configMap:
+            name: test-conf
+            items:
+              - key: application.properties
+                path: application.properties
